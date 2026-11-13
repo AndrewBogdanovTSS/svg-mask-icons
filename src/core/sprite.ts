@@ -1,5 +1,6 @@
 import type { VariantAxes, VariantManifest, VariantPlan, VariantSelection } from './variants'
 import type { Config as SvgoConfig } from 'svgo'
+import type { Document, Element } from '@xmldom/xmldom'
 import { DOMImplementation, DOMParser, XMLSerializer } from '@xmldom/xmldom'
 import { createHash, randomUUID } from 'node:crypto'
 import { promises as fs } from 'node:fs'
@@ -110,11 +111,10 @@ const STACK_STYLE = ':root>svg{display:none}:root>svg:target{display:block}'
 /** Root attributes that only matter to an icon as a standalone file. */
 const STANDALONE_ATTRS = new Set(['width', 'height', 'x', 'y', 'id', 'version', 'baseProfile', 'xml:space', 'enable-background'])
 
+// Warnings stay quiet; an error or fatal error stops the build.
 const parser = new DOMParser({
-  errorHandler: {
-    warning: () => {},
-    error: (message: string) => { throw new Error(message) },
-    fatalError: (message: string) => { throw new Error(message) },
+  onError: (level, message) => {
+    if (level !== 'warning') throw new Error(message)
   },
 })
 

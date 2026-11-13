@@ -1,8 +1,8 @@
 {
   "name": "mask-icons",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
-  "description": "SVG icon sprite rendered through CSS masks, for Vite, Vue and Nuxt.",
+  "description": "SVG icons from CSS-masked sprites, for Vite, Vue and Nuxt.",
   "keywords": [
     "icons",
     "svg",
@@ -71,7 +71,7 @@
     "provenance": true
   },
   "dependencies": {
-    "@xmldom/xmldom": "^0.8.10",
+    "@xmldom/xmldom": "^0.9.12",
     "svgo": "^4.1.0"
   },
   "peerDependencies": {
