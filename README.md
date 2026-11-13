@@ -4,6 +4,10 @@
   <img src="./assets/devtools-icon-outline.svg" width="120" alt="svg-mask-icons logo">
 </p>
 
+<p align="center">
+  <a href="https://www.npmjs.com/package/svg-mask-icons"><img src="https://img.shields.io/npm/v/svg-mask-icons" alt="npm version"></a>
+</p>
+
 SVG icons from sprites, drawn with CSS masks, for Vite, Vue and Nuxt.
 
 Each icon is an empty `<i>` masked by a fragment of a stack sprite (`url(sprite.svg#name)`) and painted with `currentColor`:

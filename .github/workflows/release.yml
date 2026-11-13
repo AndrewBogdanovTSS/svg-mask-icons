@@ -1,12 +1,14 @@
 name: release
 
-# Publishes to npm when a version tag is pushed: `git tag v0.1.0 && git push origin v0.1.0`.
+# Publishes to npm when a version tag is pushed, then creates the matching
+# GitHub release: `git tag v0.1.0 && git push origin v0.1.0`.
 on:
   push:
     tags: ['v*']
 
 permissions:
-  contents: read
+  # Creates the GitHub release.
+  contents: write
   # Lets npm verify this workflow (trusted publishing) and sign the provenance statement.
   id-token: write
 
@@ -31,3 +33,9 @@ jobs:
       # for a short-lived publish token, so no npm token is stored. `prepublishOnly`
       # builds again; `publishConfig` sets public access and provenance.
       - run: npm publish
+      # Notes list the commits since the previous tag; edit them on GitHub afterwards.
+      # Skipped when the release already exists, so a rerun doesn't fail.
+      - name: GitHub release
+        run: gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1 || gh release create "$GITHUB_REF_NAME" --verify-tag --generate-notes --title "$GITHUB_REF_NAME"
+        env:
+          GH_TOKEN: ${{ github.token }}
