@@ -22,8 +22,10 @@ The tradeoff: a mask paints one color. Multicolor icons need another approach.
 ## Install
 
 ```bash
-pnpm add svg-mask-icons
+pnpm add svg-mask-icons -D
 ```
+
+A dev dependency is enough for Nuxt and for Vite apps that bundle everything: the sprite builder only runs at build time, and the small runtime (`svg-mask-icons/vue`) is bundled into the app. Install it as a regular dependency for a server-rendered Vite app that runs from `node_modules` with dev dependencies left out, where the server imports `svg-mask-icons/vue` at runtime.
 
 ## Nuxt
 
