@@ -1,0 +1,49 @@
+name: pages
+
+# Builds the playground as a static site and publishes it to GitHub Pages.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time; a running one finishes before the next starts.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm --dir playground install --frozen-lockfile
+      - run: pnpm --dir playground generate
+        env:
+          # Pages serves a project site at /<repository>/.
+          NUXT_APP_BASE_URL: /${{ github.event.repository.name }}/
+          NITRO_PRESET: github_pages
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: playground/.output/public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

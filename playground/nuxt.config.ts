@@ -1,6 +1,6 @@
 export default defineNuxtConfig({
-  // The layer ships the icons: core ones plus the `account` and `checkout` groups.
-  extends: ['./layer'],
+  // The theme layer ships the icons: core ones plus the `account` and `checkout` groups.
+  extends: ['./theme'],
   modules: ['svg-mask-icons/nuxt'],
   maskIcons: {
     variants: {

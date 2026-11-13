@@ -8,6 +8,10 @@
   <a href="https://www.npmjs.com/package/svg-mask-icons"><img src="https://img.shields.io/npm/v/svg-mask-icons" alt="npm version"></a>
 </p>
 
+<p align="center">
+  <a href="https://andrewbogdanovtss.github.io/svg-mask-icons/"><strong>Live demo</strong></a>
+</p>
+
 SVG icons from sprites, drawn with CSS masks, for Vite, Vue and Nuxt.
 
 Each icon is an empty `<i>` masked by a fragment of a stack sprite (`url(sprite.svg#name)`) and painted with `currentColor`:
@@ -32,7 +36,7 @@ A dev dependency is enough for Nuxt and for Vite apps that bundle everything: th
 ```ts
 // nuxt.config.ts
 export default defineNuxtConfig({
-  modules: ['svg-mask-icons/nuxt'],
+  modules: ['svg-mask-icons/nuxt']
 })
 ```
 
@@ -43,6 +47,34 @@ Put icons in `assets/icons/` (inside `srcDir`, so `app/assets/icons/` in Nuxt 4)
 ```
 
 Icon groups and names are typed from the sprites after `nuxi prepare`.
+
+Configure the module under the `maskIcons` key, which Nuxt types for you:
+
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+  modules: ['svg-mask-icons/nuxt'],
+  maskIcons: {
+    dir: 'icons', // default: 'assets/icons', inside each layer's srcDir
+    componentName: 'AppIcon', // used as <app-icon>; default: 'MaskIcon'
+    groups: {
+      checkout: { preload: true } // preload a group besides core
+    }
+  }
+})
+```
+
+Options can also go inline, next to the module:
+
+```ts
+export default defineNuxtConfig({
+  modules: [
+    ['svg-mask-icons/nuxt', { componentName: 'AppIcon' }]
+  ]
+})
+```
+
+With `componentName: false`, no component is registered: wrap `MaskIcon` from `svg-mask-icons/vue` in a component of your own instead.
 
 | Option          | Default                          | Description                                                  |
 |-----------------|----------------------------------|--------------------------------------------------------------|
@@ -64,7 +96,12 @@ import vue from '@vitejs/plugin-vue'
 import maskIcons from 'svg-mask-icons/vite'
 
 export default {
-  plugins: [vue(), maskIcons({ dirs: 'src/assets/icons' })],
+  plugins: [
+    vue(),
+    maskIcons({
+      dirs: 'custom/assets/path' // default: 'src/assets/icons'
+    })
+  ]
 }
 ```
 
@@ -117,52 +154,64 @@ Pick the group with the `group` prop. It defaults to `core`, and names only need
 
 ```vue
 <mask-icon name="arrow" />
-<mask-icon group="checkout" name="cart" />
+<mask-icon name="cart" group="checkout" />
 ```
 
-The browser downloads a group's sprite when the first of its icons renders, so a page without checkout icons never loads the checkout sprite. That first icon appears once the sprite arrives. For icons visible on first paint, preload their group:
+The browser downloads a group's sprite when the first of its icons renders, so a page without checkout icons never loads the checkout sprite. 
+That first icon appears once the sprite arrives. For icons visible on first paint, preload their group:
 
 ```ts
 maskIcons: {
   groups: {
     core: { preload: true }, // the default
-    checkout: { preload: true },
-  },
+    checkout: { preload: true }
+  }
 }
 ```
 
-A preloaded group's sprite gets a `<link rel="preload" as="image" crossorigin="anonymous">`: in the server-rendered head with Nuxt, and from `createMaskIcons` with Vite. The `crossorigin` matches the CORS mode the browser fetches mask images in, so the preload is reused instead of downloaded twice.
+A preloaded group's sprite gets a `<link rel="preload" as="image" crossorigin="anonymous">`: in the server-rendered head with Nuxt, and from `createMaskIcons` with Vite. 
+The `crossorigin` matches the CORS mode the browser fetches mask images in, so the preload is reused instead of downloaded twice.
 
 Overrides work per group: a layer's `checkout/cart.svg` replaces the `checkout/cart.svg` of a layer it extends.
 
 ## Variants
 
-A mask paints one color, and page CSS can't reach inside the sprite, so an icon's shapes can't be restyled at runtime. Variants build the looks you need into the sprite instead: thinner or bolder strokes, outline or solid fill, and any other presentation attribute that passes from an element to its children (`stroke-linecap`, `stroke-dasharray`, `fill-rule`, `fill-opacity`, ...).
+A mask paints one color, and page CSS can't reach inside the sprite, so an icon's shapes can't be restyled at runtime. 
+Variants build the looks you need into the sprite instead: thinner or bolder strokes, 
+outline or solid fill, and any other presentation attribute that passes from an element to its children 
+(`stroke-linecap`, `stroke-dasharray`, `fill-rule`, `fill-opacity`, ...).
 
 Define the axes once, then choose which icons get them, per group or per icon:
 
 ```ts
 maskIcons: {
   variants: {
-    weight: { regular: { 'stroke-width': 1.5 }, thin: { 'stroke-width': 1 }, bold: { 'stroke-width': 2 } },
-    style: { outline: { fill: 'none' }, solid: { fill: '#000' } },
+    weight: { 
+      regular: { 'stroke-width': 1.5 }, 
+      thin: { 'stroke-width': 1 }, 
+      bold: { 'stroke-width': 2 } 
+    },
+    style: { 
+      outline: { fill: 'none' }, 
+      solid: { fill: '#000' } 
+    }
   },
   // The look without `variant`. The first value of each axis by default.
   defaultVariant: { weight: 'regular', style: 'outline' },
   groups: {
-    core: { variants: ['weight'] }, // every core icon gets every weight
+    core: { variants: ['weight'] } // every core icon gets every weight
   },
   icons: {
     'checkout/cart': { variants: ['bold', 'solid'] }, // only cart gets these two
-    'arrow': { variants: { weight: ['bold'] } }, // replaces the group's: regular and bold only
-  },
+    'arrow': { variants: { weight: ['bold'] } } // replaces the group's: regular and bold only
+  }
 }
 ```
 
 ```vue
 <mask-icon name="arrow" />                        <!-- default: regular -->
 <mask-icon name="arrow" variant="bold" />
-<mask-icon group="checkout" name="cart" variant="solid" />
+<mask-icon name="cart" variant="solid" group="checkout" />
 ```
 
 A selection takes one of three forms:
@@ -215,16 +264,30 @@ Each icon goes through [SVGO](https://svgo.dev) 4 with its default preset, the s
 maskIcons: {
   svgo: {
     multipass: true,
-    plugins: [{ name: 'preset-default', params: { overrides: { convertColors: false } } }],
-  },
+    plugins: [{ 
+      name: 'preset-default', 
+      params: { 
+        overrides: { 
+          convertColors: false 
+        } 
+      } 
+    }]
+  }
 }
 ```
 
-A lower `floatPrecision` makes a smaller sprite but moves the points of detailed icons: on hand-optimized icons, precision 2 visibly changed some shapes. Check the [gallery](#icon-gallery) after lowering it.
+A lower `floatPrecision` makes a smaller sprite but moves the points of detailed icons: on hand-optimized icons, precision 2 visibly changed some shapes. 
+Check the [gallery](#icon-gallery) after lowering it.
 
 ## Caching
 
-Each group's sprite is stored as `<cacheDir>/<hash>.svg`, where the hash covers the icon file paths, the SVGO options and the variant settings. Functions in the SVGO options, such as a custom plugin's code, are not part of the hash: delete the cache after changing one. A build reuses it unless an icon file is newer. Switching between icon sets, such as Nuxt layer stacks, restores a sprite built before instead of compiling it again.
+Each group's sprite is stored as `<cacheDir>/<hash>.svg`, where the hash covers the icon file paths, the SVGO options and the variant settings. 
+Functions in the SVGO options, such as a custom plugin's code, are not part of the hash: delete the cache after changing one. 
+A build reuses it unless an icon file is newer. Switching between icon sets, such as Nuxt layer stacks, restores a sprite built before instead of compiling it again.
+
+## Playground
+
+[`playground/`](./playground/README.md) is a Nuxt app that shows every feature on one page: icon groups, a lazily loaded group, variants and the icon gallery. It is deployed to GitHub Pages as the [live demo](https://andrewbogdanovtss.github.io/svg-mask-icons/); its README explains how to run it locally.
 
 ## License
 
