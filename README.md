@@ -1,7 +1,7 @@
-<h1 align="center">mask-icons</h1>
+<h1 align="center">svg-mask-icons</h1>
 
 <p align="center">
-  <img src="./assets/devtools-icon-outline.svg" width="120" alt="mask-icons logo">
+  <img src="./assets/devtools-icon-outline.svg" width="120" alt="svg-mask-icons logo">
 </p>
 
 SVG icons from sprites, drawn with CSS masks, for Vite, Vue and Nuxt.
@@ -18,7 +18,7 @@ The tradeoff: a mask paints one color. Multicolor icons need another approach.
 ## Install
 
 ```bash
-pnpm add mask-icons
+pnpm add svg-mask-icons
 ```
 
 ## Nuxt
@@ -26,7 +26,7 @@ pnpm add mask-icons
 ```ts
 // nuxt.config.ts
 export default defineNuxtConfig({
-  modules: ['mask-icons/nuxt'],
+  modules: ['svg-mask-icons/nuxt'],
 })
 ```
 
@@ -55,7 +55,7 @@ Other modules can read each group's icons with the `mask-icons:ready` hook.
 ```ts
 // vite.config.ts
 import vue from '@vitejs/plugin-vue'
-import maskIcons from 'mask-icons/vite'
+import maskIcons from 'svg-mask-icons/vite'
 
 export default {
   plugins: [vue(), maskIcons({ dirs: 'src/assets/icons' })],
@@ -64,7 +64,7 @@ export default {
 
 ```ts
 // main.ts
-import { createMaskIcons } from 'mask-icons/vue'
+import { createMaskIcons } from 'svg-mask-icons/vue'
 import { preload, sprites, variants } from 'virtual:mask-icons'
 
 createApp(App).use(createMaskIcons({ sprites, preload, variants })).mount('#app')
@@ -72,7 +72,7 @@ createApp(App).use(createMaskIcons({ sprites, preload, variants })).mount('#app'
 
 ```vue
 <script setup lang="ts">
-import { MaskIcon } from 'mask-icons/vue'
+import { MaskIcon } from 'svg-mask-icons/vue'
 </script>
 
 <template>

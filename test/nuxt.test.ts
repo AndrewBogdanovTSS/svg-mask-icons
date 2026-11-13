@@ -108,7 +108,7 @@ describe('maskIcons (nuxt)', () => {
     expect(addVitePlugin).toHaveBeenCalledWith(expect.objectContaining({ name: 'mask-icons' }))
     expect(addPluginTemplate).toHaveBeenCalledWith(expect.objectContaining({ filename: 'mask-icons.mjs' }))
     expect(types.getContents()).toContain('interface MaskIconRegistry')
-    expect(addComponent).toHaveBeenCalledWith({ name: 'MaskIcon', export: 'MaskIcon', filePath: 'mask-icons/vue' })
+    expect(addComponent).toHaveBeenCalledWith({ name: 'MaskIcon', export: 'MaskIcon', filePath: 'svg-mask-icons/vue' })
   })
 
   it('registers no component when `componentName` is false', async () => {

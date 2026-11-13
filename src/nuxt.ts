@@ -72,7 +72,7 @@ declare module '@nuxt/schema' {
 }
 
 const renderPlugin = () => `import { defineNuxtPlugin, useHead } from '#imports'
-import { createMaskIcons, preloadLink } from 'mask-icons/vue'
+import { createMaskIcons, preloadLink } from 'svg-mask-icons/vue'
 import { preload, sprites, variants } from '${VIRTUAL_ID}'
 
 export default defineNuxtPlugin((nuxtApp) => {
@@ -87,7 +87,7 @@ export default defineNuxtPlugin((nuxtApp) => {
  */
 export default defineNuxtModule<MaskIconsNuxtOptions>({
   meta: {
-    name: 'mask-icons',
+    name: 'svg-mask-icons',
     configKey: 'maskIcons',
     compatibility: {
       nuxt: '>=3.17.0',
@@ -159,7 +159,7 @@ export default defineNuxtModule<MaskIconsNuxtOptions>({
       addComponent({
         name: options.componentName,
         export: 'MaskIcon',
-        filePath: 'mask-icons/vue',
+        filePath: 'svg-mask-icons/vue',
       })
     }
 

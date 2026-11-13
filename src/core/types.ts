@@ -18,10 +18,10 @@ declare module '${VIRTUAL_ID}' {
   /** Icon names of each group. */
   export const icons: Record<string, string[]>
   /** Variant axes, their defaults and the variants built per icon, or null without variants. */
-  export const variants: import('mask-icons/vue').MaskIconVariantManifest | null
+  export const variants: import('svg-mask-icons/vue').MaskIconVariantManifest | null
 }
 
-declare module 'mask-icons/vue' {
+declare module 'svg-mask-icons/vue' {
   interface MaskIconRegistry {
 ${Object.entries(groups).map(([group, { icons }]) => `    ${JSON.stringify(group)}: ${icons.map((name) => JSON.stringify(name)).join(' | ') || 'never'}`).join('\n')}
   }
