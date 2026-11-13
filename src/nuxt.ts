@@ -1,8 +1,8 @@
 import type { SpriteGroups, SpriteResult, SvgoOptions } from './core/sprite'
 import type { MaskIconGroupOptions, MaskIconOptions, MaskIconVariantOptions } from './vite'
-import type { HookResult } from '@nuxt/schema'
+import type { HookResult, Nuxt } from '@nuxt/schema'
 import { join, resolve, sep } from 'node:path'
-import { addComponent, addPluginTemplate, addTypeTemplate, addVitePlugin, defineNuxtModule, useLogger } from '@nuxt/kit'
+import { addComponent, addPluginTemplate, addTypeTemplate, addVitePlugin, defineNuxtModule, runWithNuxtContext, useLogger } from '@nuxt/kit'
 import { GALLERY_ICON, GALLERY_ROUTE } from './core/gallery'
 import { buildSprites } from './core/sprite'
 import { renderTypes, VIRTUAL_ID } from './core/types'
@@ -81,6 +81,86 @@ export default defineNuxtPlugin((nuxtApp) => {
 })
 `
 
+/** The module's setup, run in the Nuxt context of the instance it sets up. */
+const setupModule = async (options: MaskIconsNuxtOptions, nuxt: Nuxt) => {
+  // `_layers` is ordered from the highest priority layer to the lowest.
+  const dirs = nuxt.options._layers.map((layer) => join(layer.config.srcDir, options.dir!))
+  const cacheDir = join(nuxt.options.rootDir, options.cacheDir!)
+
+  // Built here, not only in the Vite plugin, so `nuxi prepare` writes the icon
+  // types and other modules can read the icon list during setup. The plugin's
+  // own build then reuses the same sprite from the cache.
+  const variantOptions = { variants: options.variants, defaultVariant: options.defaultVariant, icons: options.icons }
+  const result = await buildSprites({
+    dirs,
+    cacheDir,
+    svgo: options.svgo,
+    groups: options.groups,
+    ...variantOptions,
+    warn: (message) => useLogger('mask-icons').warn(message),
+  })
+  let groups = result
+  const variantValues = Object.values(options.variants ?? {}).flatMap((values) => Object.keys(values))
+
+  addTypeTemplate({
+    filename: 'types/mask-icons.d.ts',
+    getContents: () => renderTypes(groups, variantValues),
+  })
+
+  addVitePlugin(maskIcons({
+    dirs,
+    groups: options.groups,
+    ...variantOptions,
+    cacheDir,
+    svgo: options.svgo,
+    dts: false,
+    gallery: options.gallery !== false && { root: nuxt.options.rootDir },
+    onBuild: (next) => {
+      groups = next
+    },
+  }))
+
+  // Nuxt prefetches every asset the app entry imports, which would download
+  // the sprite of every group on every page. A sprite loads when one of its
+  // icons renders, or early through its group's `preload`.
+  nuxt.hook('build:manifest', (manifest) => {
+    for (const entry of Object.values(manifest)) {
+      if (!entry.src || !resolve(nuxt.options.srcDir, entry.src).startsWith(cacheDir + sep)) continue
+      for (const sprite of [entry, manifest[entry.file]]) {
+        if (!sprite) continue
+        sprite.prefetch = false
+        sprite.preload = false
+      }
+    }
+  })
+
+  addPluginTemplate({
+    filename: 'mask-icons.mjs',
+    getContents: renderPlugin,
+  })
+
+  if (options.componentName) {
+    addComponent({
+      name: options.componentName,
+      export: 'MaskIcon',
+      filePath: 'svg-mask-icons/vue',
+    })
+  }
+
+  if (nuxt.options.dev && options.gallery !== false) {
+    ;(nuxt.hook as unknown as CustomTabsHook)('devtools:customTabs', (tabs) => {
+      tabs.push({
+        name: 'mask-icons',
+        title: 'Mask Icons',
+        icon: GALLERY_ICON,
+        view: { type: 'iframe', src: `${GALLERY_ROUTE}/` },
+      })
+    })
+  }
+
+  await nuxt.callHook('mask-icons:ready', result)
+}
+
 /**
  * Builds one sprite from the icons of every Nuxt layer, provides it to the app
  * and registers `<mask-icon>`.
@@ -98,83 +178,12 @@ export default defineNuxtModule<MaskIconsNuxtOptions>({
     cacheDir: 'node_modules/.cache/mask-icons',
     componentName: 'MaskIcon',
   },
-  async setup(options, nuxt) {
-    // `_layers` is ordered from the highest priority layer to the lowest.
-    const dirs = nuxt.options._layers.map((layer) => join(layer.config.srcDir, options.dir!))
-    const cacheDir = join(nuxt.options.rootDir, options.cacheDir!)
-
-    // Built here, not only in the Vite plugin, so `nuxi prepare` writes the icon
-    // types and other modules can read the icon list during setup. The plugin's
-    // own build then reuses the same sprite from the cache.
-    const variantOptions = { variants: options.variants, defaultVariant: options.defaultVariant, icons: options.icons }
-    const result = await buildSprites({
-      dirs,
-      cacheDir,
-      svgo: options.svgo,
-      groups: options.groups,
-      ...variantOptions,
-      warn: (message) => useLogger('mask-icons').warn(message),
-    })
-    let groups = result
-    const variantValues = Object.values(options.variants ?? {}).flatMap((values) => Object.keys(values))
-
-    addTypeTemplate({
-      filename: 'types/mask-icons.d.ts',
-      getContents: () => renderTypes(groups, variantValues),
-    })
-
-    addVitePlugin(maskIcons({
-      dirs,
-      groups: options.groups,
-      ...variantOptions,
-      cacheDir,
-      svgo: options.svgo,
-      dts: false,
-      gallery: options.gallery !== false && { root: nuxt.options.rootDir },
-      onBuild: (next) => {
-        groups = next
-      },
-    }))
-
-    // Nuxt prefetches every asset the app entry imports, which would download
-    // the sprite of every group on every page. A sprite loads when one of its
-    // icons renders, or early through its group's `preload`.
-    nuxt.hook('build:manifest', (manifest) => {
-      for (const entry of Object.values(manifest)) {
-        if (!entry.src || !resolve(nuxt.options.srcDir, entry.src).startsWith(cacheDir + sep)) continue
-        for (const sprite of [entry, manifest[entry.file]]) {
-          if (!sprite) continue
-          sprite.prefetch = false
-          sprite.preload = false
-        }
-      }
-    })
-
-    addPluginTemplate({
-      filename: 'mask-icons.mjs',
-      getContents: renderPlugin,
-    })
-
-    if (options.componentName) {
-      addComponent({
-        name: options.componentName,
-        export: 'MaskIcon',
-        filePath: 'svg-mask-icons/vue',
-      })
-    }
-
-    if (nuxt.options.dev && options.gallery !== false) {
-      ;(nuxt.hook as unknown as CustomTabsHook)('devtools:customTabs', (tabs) => {
-        tabs.push({
-          name: 'mask-icons',
-          title: 'Mask Icons',
-          icon: GALLERY_ICON,
-          view: { type: 'iframe', src: `${GALLERY_ROUTE}/` },
-        })
-      })
-    }
-
-    await nuxt.callHook('mask-icons:ready', result)
+  setup(options, nuxt) {
+    // Kit helpers find the Nuxt instance through this copy of @nuxt/kit. When the
+    // app's Nuxt runs on another copy, that context is never set here and they fall
+    // back to the process-wide instance: the last Nuxt loaded, which is another
+    // instance when several load at once, as in Vitest with projects.
+    return runWithNuxtContext(nuxt, () => setupModule(options, nuxt))
   },
 })
 
