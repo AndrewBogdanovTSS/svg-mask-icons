@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: read
-  # Signs the npm provenance statement.
+  # Lets npm verify this workflow (trusted publishing) and sign the provenance statement.
   id-token: write
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
-      # `prepublishOnly` builds again; `publishConfig` sets public access and provenance.
+      # Trusted publishing: npm exchanges this job's OIDC token (`id-token: write`)
+      # for a short-lived publish token, so no npm token is stored. `prepublishOnly`
+      # builds again; `publishConfig` sets public access and provenance.
       - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -16,13 +16,13 @@
   ],
   "license": "MIT",
   "author": "Andrii Bohdanov",
-  "homepage": "https://github.com/AndrewBogdanovTSS/mask-icons#readme",
+  "homepage": "https://github.com/AndrewBogdanovTSS/svg-mask-icons#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AndrewBogdanovTSS/mask-icons.git"
+    "url": "git+https://github.com/AndrewBogdanovTSS/svg-mask-icons.git"
   },
   "bugs": {
-    "url": "https://github.com/AndrewBogdanovTSS/mask-icons/issues"
+    "url": "https://github.com/AndrewBogdanovTSS/svg-mask-icons/issues"
   },
   "engines": {
     "node": ">=24"
