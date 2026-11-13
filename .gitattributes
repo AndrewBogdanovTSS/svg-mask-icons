@@ -1,0 +1,3 @@
+# Sprite output is compared as text by the tests, so line endings must stay
+# stable on every platform.
+* text=auto eol=lf

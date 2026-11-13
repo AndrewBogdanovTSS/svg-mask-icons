@@ -1,0 +1,72 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 1
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['24.0.0', '24', '26']
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test:unit
+
+  playground:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - run: pnpm --dir playground install --frozen-lockfile
+      - run: pnpm --dir playground generate
+      - name: Sprites are emitted per group, referenced, and linked only for core
+        run: |
+          out=playground/.output/public
+          core=$(basename "$(grep -l 'id="arrow-circle"' $out/_nuxt/*.svg)")
+          account=$(basename "$(grep -l 'id="user-plus"' $out/_nuxt/*.svg)")
+          test "$core" != "$account"
+          grep -q "_nuxt/$core#arrow-circle" $out/index.html
+          grep -q "_nuxt/$core#heart~solid" $out/index.html
+          grep -q "$account" $out/_nuxt/*.js
+          grep -Eq "<link[^>]*rel=\"preload\"[^>]*_nuxt/$core" $out/index.html
+          # No preload or prefetch: the account sprite loads only when its icon renders.
+          ! grep -Eq "<link[^>]*_nuxt/$account" $out/index.html

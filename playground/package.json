@@ -1,0 +1,16 @@
+{
+  "name": "mask-icons-playground",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "generate": "nuxi generate",
+    "prepare": "nuxi prepare"
+  },
+  "dependencies": {
+    "mask-icons": "link:..",
+    "nuxt": "^4.6.4",
+    "vue": "^3.5.45"
+  }
+}

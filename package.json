@@ -1,0 +1,110 @@
+{
+  "name": "mask-icons",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "SVG icon sprite rendered through CSS masks, for Vite, Vue and Nuxt.",
+  "keywords": [
+    "icons",
+    "svg",
+    "sprite",
+    "css-mask",
+    "vite",
+    "vite-plugin",
+    "vue",
+    "nuxt",
+    "nuxt-module"
+  ],
+  "license": "MIT",
+  "author": "Andrii Bohdanov",
+  "homepage": "https://github.com/AndrewBogdanovTSS/mask-icons#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AndrewBogdanovTSS/mask-icons.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AndrewBogdanovTSS/mask-icons/issues"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "packageManager": "pnpm@11.25.0",
+  "sideEffects": false,
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./vite": {
+      "types": "./dist/vite.d.mts",
+      "import": "./dist/vite.mjs"
+    },
+    "./vue": {
+      "types": "./dist/vue.d.mts",
+      "import": "./dist/vue.mjs"
+    },
+    "./nuxt": {
+      "types": "./dist/nuxt.d.mts",
+      "import": "./dist/nuxt.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "assets/devtools-icon-outline.svg",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "lint": "eslint .",
+    "test": "pnpm run build && vitest run",
+    "test:unit": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "scan": "pnpm audit --registry=https://registry.npmjs.org",
+    "prepublishOnly": "pnpm run build"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "dependencies": {
+    "@xmldom/xmldom": "^0.8.10",
+    "svgo": "^4.1.0"
+  },
+  "peerDependencies": {
+    "@nuxt/kit": ">=3.17",
+    "vite": ">=5.3",
+    "vue": ">=3.4"
+  },
+  "peerDependenciesMeta": {
+    "@nuxt/kit": {
+      "optional": true
+    },
+    "vite": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@arethetypeswrong/core": "^0.18.5",
+    "@babel/core": "^8.1.2",
+    "@babel/eslint-parser": "^8.1.2",
+    "@babel/plugin-syntax-typescript": "^8.0.3",
+    "@eslint/js": "^10.0.1",
+    "@nuxt/kit": "^4.6.4",
+    "@nuxt/schema": "^4.6.4",
+    "@types/node": "^26.6.6",
+    "eslint": "^10.14.0",
+    "publint": "^0.3.25",
+    "tsdown": "^0.23.7",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0",
+    "vue": "^3.5.45"
+  }
+}

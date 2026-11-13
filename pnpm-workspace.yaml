@@ -1,0 +1,4 @@
+# esbuild's install script links the platform binary already supplied by its
+# optional dependency. The package builds and tests without running it.
+allowBuilds:
+  esbuild: false

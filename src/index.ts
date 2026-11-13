@@ -1,0 +1,5 @@
+export type { BuildSpriteOptions, BuildSpritesOptions, SpriteGroups, SpriteResult, SpriteVariants, SvgoOptions } from './core/sprite'
+export { buildSprite, buildSprites, collectIcons, defaultSvgoOptions, variantManifest } from './core/sprite'
+export { DEFAULT_GROUP, renderTypes, VIRTUAL_ID } from './core/types'
+export type { VariantAttrs, VariantAxes, VariantManifest, VariantSelection } from './core/variants'
+export { VARIANT_SEPARATOR, variantFragment } from './core/variants'
