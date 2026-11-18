@@ -1,6 +1,6 @@
 {
   "name": "svg-mask-icons",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "SVG icons from CSS-masked sprites, for Vite, Vue and Nuxt.",
   "keywords": [
