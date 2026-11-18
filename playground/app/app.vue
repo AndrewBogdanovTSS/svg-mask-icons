@@ -104,7 +104,7 @@ onBeforeUnmount(() => observer?.disconnect())
   <div class="container">
     <section class="hero">
       <span class="pill">Vite · Vue · Nuxt</span>
-      <h1>SVG icons from <span class="accent">CSS-masked sprites</span></h1>
+      <h1>SVG icons from <br/><span class="accent">CSS-masked sprites</span></h1>
       <p>One element per icon, painted with the text color. Sprites split into groups that load on demand, with variants built in at build time.</p>
       <div class="actions">
         <a class="button primary" href="https://github.com/AndrewBogdanovTSS/svg-mask-icons#install">Get started <mask-icon name="arrow-circle" /></a>
