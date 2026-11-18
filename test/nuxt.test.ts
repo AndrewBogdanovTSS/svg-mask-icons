@@ -10,6 +10,7 @@ vi.mock('@nuxt/kit', () => ({
   addTypeTemplate: vi.fn(),
   addVitePlugin: vi.fn(),
   defineNuxtModule: vi.fn((definition) => definition),
+  runWithNuxtContext: vi.fn((_nuxt, fn) => fn()),
   useLogger: vi.fn(() => ({ warn: vi.fn() })),
 }))
 
