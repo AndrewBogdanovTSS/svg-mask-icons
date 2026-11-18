@@ -83,7 +83,7 @@ onBeforeUnmount(() => observer?.disconnect())
 <template>
   <header class="topbar">
     <div class="container topbar-inner">
-      <span class="brand"><mask-icon name="bookmark" variant="solid" class="brand-icon" /> svg-mask-icons</span>
+      <span class="brand"><mask-icon name="devtools" :size="24" class="brand-icon" /> svg-mask-icons</span>
       <nav class="links">
         <a v-if="dev" href="/__mask-icons/">Icon gallery</a>
         <a href="https://www.npmjs.com/package/svg-mask-icons">npm</a>
@@ -103,6 +103,7 @@ onBeforeUnmount(() => observer?.disconnect())
 
   <div class="container">
     <section class="hero">
+      <mask-icon name="devtools" :size="96" class="hero-icon" />
       <span class="pill">Vite · Vue · Nuxt</span>
       <h1>SVG icons from <span class="accent">CSS-masked sprites</span></h1>
       <p>One element per icon, painted with the text color. Sprites split into groups that load on demand, with variants built in at build time.</p>
@@ -320,6 +321,7 @@ a:hover { text-decoration: underline; }
 .theme-toggle:hover { color: var(--text-highlighted); background: var(--bg-accented); }
 
 .hero { display: flex; flex-direction: column; gap: 20px; align-items: center; padding: 80px 0; text-align: center; }
+.hero-icon { color: var(--primary); }
 .hero h1 { max-width: 760px; font-size: clamp(36px, 6vw, 60px); line-height: 1.1; letter-spacing: -0.02em; }
 .hero p { max-width: 620px; margin: 0; font-size: 18px; color: var(--text-muted); }
 .pill { padding: 2px 12px; font-size: 13px; font-weight: 500; color: var(--text-muted); border: 1px solid var(--border); border-radius: 999px; }
