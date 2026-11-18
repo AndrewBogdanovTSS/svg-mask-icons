@@ -320,7 +320,7 @@ a:hover { text-decoration: underline; }
 .theme-toggle { display: grid; place-items: center; width: 36px; height: 36px; margin-left: 4px; font-size: 18px; color: var(--text-muted); background: transparent; border: 0; border-radius: 6px; cursor: pointer; }
 .theme-toggle:hover { color: var(--text-highlighted); background: var(--bg-accented); }
 
-.hero { display: flex; flex-direction: column; gap: 20px; align-items: center; padding: 80px 0; text-align: center; }
+.hero { display: flex; flex-direction: column; gap: 20px; align-items: center; padding: 40px 0; text-align: center; }
 .hero-icon { color: var(--primary); }
 .hero h1 { max-width: 760px; font-size: clamp(36px, 6vw, 60px); line-height: 1.1; letter-spacing: -0.02em; }
 .hero p { max-width: 620px; margin: 0; font-size: 18px; color: var(--text-muted); }
